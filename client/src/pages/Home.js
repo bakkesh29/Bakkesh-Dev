@@ -547,7 +547,7 @@ const Home = () => {
 
           <div className="animate-hidden">
             <div className="rounded-2xl overflow-hidden border border-white/10 glow">
-              <img src="/profile.png" className="w-full h-full object-cover" />
+              <img src="/profile.png" className="w-full h-full object-cover" alt="Bakkesh Y M R" />
             </div>
           </div>
 
