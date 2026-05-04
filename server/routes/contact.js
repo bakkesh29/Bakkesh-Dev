@@ -7,11 +7,14 @@ router.post('/', async (req, res) => {
     const { name, email, subject, message } = req.body;
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-      }
+      },
+      connectionTimeout: 10000
     });
 
     const mailOptions = {
@@ -27,7 +30,12 @@ router.post('/', async (req, res) => {
       `
     };
 
-    await transporter.sendMail(mailOptions);
+    await Promise.race([
+      transporter.sendMail(mailOptions),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Email timeout")), 10000)
+      )
+    ]);
     res.json({ message: 'Email sent successfully!' });
   } catch (error) {
     console.error('Email error:', error);
