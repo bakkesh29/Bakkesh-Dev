@@ -1,40 +1,46 @@
 const express = require('express');
 const router = express.Router();
-const { Resend } = require('resend');
 
 router.post('/', async (req, res) => {
+  const { name, email, subject, message } = req.body;
+
+  if (!name || !email || !subject || !message) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
   try {
-    const { name, email, subject, message } = req.body;
-
-    if (!name || !email || !message) {
-      return res.status(400).json({ message: 'Name, email and message are required.' });
-    }
-
-    const resend = new Resend(process.env.RESEND_API_KEY);
-
-    const { error } = await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: 'bakkeshymr@gmail.com',
-      subject: `Portfolio Contact: ${subject || 'New Message'} from ${name}`,
-      html: `
-        <h3>New message from your portfolio!</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Subject:</strong> ${subject || 'N/A'}</p>
-        <p><strong>Message:</strong> ${message}</p>
-      `
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: 'Portfolio Contact <onboarding@resend.dev>',
+        to: [process.env.EMAIL_TO],
+        subject: `Portfolio Contact: ${subject}`,
+        html: `
+          <h2>New Contact Form Message</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>Message:</strong></p>
+          <p>${message}</p>
+        `
+      })
     });
 
-    if (error) {
-      console.error('Resend error:', error);
-      return res.status(500).json({ message: 'Failed to send email.' });
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Resend error:', data);
+      return res.status(500).json({ error: 'Failed to send email', details: data });
     }
 
-    return res.json({ message: 'Email sent successfully!' });
-
-  } catch (err) {
-    console.error('Server error:', err);
-    return res.status(500).json({ message: err.message });
+    res.status(200).json({ message: 'Email sent successfully!' });
+  } catch (error) {
+    console.error('Contact route error:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
