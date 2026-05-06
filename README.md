@@ -192,16 +192,16 @@ The app will run at `http://localhost:3000`
 
 | Method | Endpoint | Description | Auth |
 |--------|----------|-------------|------|
-| POST | `/api/auth/login` | Admin login, returns JWT token | ❌ |
-| GET | `/api/projects` | Get all projects from MongoDB | ❌ |
+| POST | `/api/auth/login` | Admin login, returns JWT token | ✅ |
+| GET | `/api/projects` | Get all projects from MongoDB | ✅ |
 | POST | `/api/projects` | Add new project | ✅ |
-| GET | `/api/achievements` | Get all achievements | ❌ |
+| GET | `/api/achievements` | Get all achievements | ✅ |
 | POST | `/api/achievements` | Add new achievement | ✅ |
 | GET | `/api/tasks` | Get all daily tasks | ✅ |
 | POST | `/api/tasks` | Add new task | ✅ |
 | PUT | `/api/tasks/:id` | Update task status | ✅ |
 | DELETE | `/api/tasks/:id` | Delete a task | ✅ |
-| POST | `/api/contact` | Send contact email via Nodemailer | ❌ |
+| POST | `/api/contact` | Send contact email via Resender | ✅ |
 
 ---
 
